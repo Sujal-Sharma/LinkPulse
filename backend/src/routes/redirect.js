@@ -45,23 +45,8 @@ router.get('/:code', redirectRateLimiter, async (req, res) => {
     // Cached value may be a plain URL string or a JSON object (for A/B links)
     if (cacheHit) {
       metrics.increment('redirects.cacheHit')
-      try {
-        const parsed = JSON.parse(cachedData)
-        originalUrl = parsed.originalUrl
-        // Re-run A/B random selection on every cache hit
-        if (parsed.abTest) {
-          const random = Math.random() * 100
-          selectedUrl = random < (parsed.abTest.variantA?.weight ?? 50)
-            ? parsed.abTest.variantA.url
-            : parsed.abTest.variantB.url
-        } else {
-          selectedUrl = originalUrl
-        }
-      } catch {
-        // Plain string URL (non-A/B link)
-        originalUrl = cachedData
-        selectedUrl = cachedData
-      }
+      originalUrl = cachedData
+      selectedUrl = cachedData
     } else {
       metrics.increment('redirects.cacheMiss')
 
@@ -110,10 +95,10 @@ router.get('/:code', redirectRateLimiter, async (req, res) => {
       const ttl = link.expiresAt
         ? Math.max(1, Math.floor((new Date(link.expiresAt) - Date.now()) / 1000))
         : 86400
-      const cacheValue = link.abTest?.enabled
-        ? JSON.stringify({ originalUrl, abTest: link.abTest })
-        : originalUrl
-      await cacheService.cacheUrl(code, cacheValue, ttl)
+      // Don't cache A/B links — they need random selection on every request
+      if (!link.abTest?.enabled) {
+        await cacheService.cacheUrl(code, originalUrl, ttl)
+      }
     }
 
     // STEP 4: Return redirect IMMEDIATELY
