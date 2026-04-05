@@ -112,7 +112,8 @@ Redis MISS: [Redis ~1ms] + [MongoDB ~8ms] + [Cache ~1ms] = ~10ms
 | Maps | react-simple-maps | SVG world map, no tile server needed |
 | Animations | Framer Motion | Production-quality UI animations |
 | State | React Query + Zustand | Server + client state management |
-| CI/CD | GitHub Actions | Lint → Test → Deploy on every PR |
+| Email | Resend | Transactional emails (welcome, expiry, reports) |
+| CI/CD | GitHub Actions | Lint → Test on PRs, Deploy on push to main |
 | Backend hosting | Render | Auto-deploy, free tier available |
 | Frontend hosting | Vercel | Edge CDN, instant deploys |
 | Containers | Docker + Compose | Reproducible local environment |
@@ -130,7 +131,7 @@ Redis MISS: [Redis ~1ms] + [MongoDB ~8ms] + [Cache ~1ms] = ~10ms
 ### Option 1: Docker Compose (recommended)
 ```bash
 git clone https://github.com/Sujal-Sharma/LinkPulse
-cd linkpulse
+cd LinkPulse
 
 # Copy env files
 cp .env.example .env
@@ -217,11 +218,13 @@ Token bucket smooths this by tracking token replenishment continuously.
 **Trade-off:** More complex Redis Lua script but significantly more accurate
 rate limiting.
 
-### Why 301 over 302 redirect?
-301 (permanent) tells browsers to cache the redirect. Returning visitors skip
-our server entirely.
-**Trade-off:** If destination URL changes, some users see the cached old URL.
-Mitigated by cache-control headers and Redis TTL management.
+### Why 301 in production but 302 in development?
+In production, 301 (permanent) signals to intermediaries that the redirect is
+stable. However, we also set `Cache-Control: no-store` to prevent browsers from
+caching it — this ensures every click is tracked and analytics are never missed.
+In development, 302 is used so redirects are never cached, making testing easier.
+**Trade-off:** Slightly less browser-level caching benefit, but full analytics
+accuracy on every click.
 
 ### Why Node.js cluster over single process?
 JavaScript is single-threaded. Cluster creates one worker per CPU core.
