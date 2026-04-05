@@ -23,6 +23,9 @@ require('./queues/workers/emailWorker')
 const app = express()
 const httpServer = http.createServer(app)
 
+// ─── Trust proxy (Render/Railway sit behind a load balancer) ─────────────────
+app.set('trust proxy', 1)
+
 // ─── Security middleware ─────────────────────────────────────────────────────
 applySecurityMiddleware(app)
 
