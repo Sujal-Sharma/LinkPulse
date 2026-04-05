@@ -7,7 +7,6 @@
 ## 🌐 Live Demo
 - **App:** https://linkpulse.vercel.app
 - **API:** https://linkpulse-api.onrender.com
-- **Demo account:** demo@linkpulse.app / demo123456
 
 ---
 
@@ -130,7 +129,7 @@ Redis MISS: [Redis ~1ms] + [MongoDB ~8ms] + [Cache ~1ms] = ~10ms
 
 ### Option 1: Docker Compose (recommended)
 ```bash
-git clone https://github.com/yourusername/linkpulse
+git clone https://github.com/Sujal-Sharma/LinkPulse
 cd linkpulse
 
 # Copy env files
@@ -296,4 +295,4 @@ VERCEL_TOKEN        — Vercel deployment token
 
 ## 📜 License
 
-MIT © 2024 LinkPulse
+MIT © 2026 Sujal Sharma
