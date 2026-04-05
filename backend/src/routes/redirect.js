@@ -125,9 +125,13 @@ router.get('/:code', redirectRateLimiter, async (req, res) => {
 
     // STEP 5: Async analytics — queued AFTER response is sent
     const latencyMs = Date.now() - startTime
+    // Get real client IP from X-Forwarded-For (Render uses multiple proxy hops)
+    const forwarded = req.headers['x-forwarded-for']
+    const realIp = forwarded ? forwarded.split(',')[0].trim() : req.ip
+
     const clickData = {
       shortCode: code,
-      ip: req.ip,
+      ip: realIp,
       userAgent: req.headers['user-agent'] || '',
       referrer: req.headers['referer'] || 'direct',
       clickedAt: new Date().toISOString(),
