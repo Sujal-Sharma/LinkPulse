@@ -73,7 +73,7 @@ export default function Landing() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           {/* Badge */}
           <span className="badge badge-primary" style={{ marginBottom: '24px' }}>
-            ⚡ 1M+ redirects served
+            ⚡ Built for Scale
           </span>
 
           <h1 style={{ fontSize: 'clamp(38px, 6vw, 64px)', fontFamily: 'Space Grotesk', fontWeight: 700, lineHeight: 1.1, marginBottom: '16px' }}>
@@ -195,10 +195,10 @@ export default function Landing() {
           display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: '24px',
         }}>
           {[
-            ['1M+', 'Daily Redirects'],
-            ['99.9%', 'Uptime'],
+            ['Built for', 'Scale'],
+            ['Cloud', 'Deployed'],
             ['< 10ms', 'Latency'],
-            ['50+', 'Countries Tracked'],
+            ['Global', 'Geo Tracking'],
           ].map(([val, label]) => (
             <div key={label} style={{ textAlign: 'center' }}>
               <p className="gradient-text" style={{ fontFamily: 'Space Grotesk', fontWeight: 700, fontSize: '28px' }}>{val}</p>
