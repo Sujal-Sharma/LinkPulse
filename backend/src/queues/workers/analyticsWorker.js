@@ -46,6 +46,7 @@ analyticsQueue.process('processClick', 5, async (job) => {
     cleanIp = process.env.DEV_TEST_IP || '103.21.124.0' // Mumbai, India by default
   }
   const geo = geoip.lookup(cleanIp) || {}
+  logger.info('DEBUG geo lookup', { rawIp: ip, cleanIp, geo })
   const country = geo.country || 'Unknown'
   const city = geo.city || 'Unknown'
   const region = geo.region || 'Unknown'
