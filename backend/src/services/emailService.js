@@ -1,28 +1,38 @@
-const { Resend } = require('resend')
+const nodemailer = require('nodemailer')
 const config = require('../config')
 const logger = require('../utils/logger')
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let transporter = null
+
+function getTransporter() {
+  if (transporter) return transporter
+  transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  })
+  return transporter
+}
 
 async function sendMail({ to, subject, html }) {
-  if (!process.env.RESEND_API_KEY) {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
     logger.warn('Email not configured — skipping send', { to, subject })
     return { skipped: true }
   }
 
   try {
-    const { data, error } = await resend.emails.send({
+    const info = await getTransporter().sendMail({
       from: config.email.from,
       to,
       subject,
       html,
     })
-    if (error) {
-      logger.error('Email send failed', { to, subject, error: error.message })
-      throw new Error(error.message)
-    }
-    logger.info('Email sent', { to, subject, id: data.id })
-    return data
+    logger.info('Email sent', { to, subject, messageId: info.messageId })
+    return info
   } catch (err) {
     logger.error('Email send failed', { to, subject, error: err.message })
     throw err
