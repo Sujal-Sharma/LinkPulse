@@ -42,9 +42,10 @@ function applySecurityMiddleware(app) {
   app.use(
     cors({
       origin: (origin, callback) => {
-        // Allow no-origin requests (mobile apps, curl, etc.)
         if (!origin) return callback(null, true)
         if (allowedOrigins.includes(origin)) return callback(null, true)
+        // Allow all Vercel preview deployments
+        if (origin.endsWith('.vercel.app')) return callback(null, true)
         return callback(new Error(`CORS: ${origin} not allowed`))
       },
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
